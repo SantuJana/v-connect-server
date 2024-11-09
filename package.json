@@ -4,9 +4,9 @@
   "description": "Connect with your love one to video.",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf build && npx tsc",
+    "build": "rimraf ./build && npx tsc",
     "preStart": "npm run build",
-    "start": "node build/index.js",
+    "start": "node ./build/index.js",
     "predev": "npm run build",
     "dev": "concurrently \"npx tsc -w\" \"nodemon build/index.js\""
   },
