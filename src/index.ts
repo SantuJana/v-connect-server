@@ -12,6 +12,9 @@ const app = express();
 const server = createServer(app);
 // Starting socket server
 const socketService = new SocketService(server);
+// middlewares
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 // Routes
 app.use("/v-connect/api", routes);

@@ -1,11 +1,9 @@
 import { Router } from "express";
-import User from "../model/user.model"
+import User from "../model/user.model";
+import authRouter from "../route/auth.route";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.send("Hello World");
-  User.create({name: "sa", email: "knc", password: "knxsn"})
-});
+router.use("/auth", authRouter);
 
 export default router;
