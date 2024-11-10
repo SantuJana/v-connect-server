@@ -68,6 +68,7 @@ export const login = async (req: Request, res: Response) => {
       status: "unauthenticated",
       msg: "Invalid credentials",
     });
+    return;
   }
 
   const payload = { id: existingUser._id };
