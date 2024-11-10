@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 config();
 import { createServer } from "http";
+import cors from "cors";
 import { SocketService } from "./service/socket.service";
 import express from "express";
 import routes from "./route";
@@ -13,8 +14,9 @@ const server = createServer(app);
 // Starting socket server
 const socketService = new SocketService(server);
 // middlewares
+app.use(cors({origin: "*"}));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/v-connect/api", routes);
