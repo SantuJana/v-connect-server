@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 import User from "../model/user.model";
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, dob } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !dob) {
     res.status(400).json({
       code: 400,
       status: "error",
-      msg: "Name, Email and Password are mandatory",
+      msg: "Name, Email, Date of birth and Password are mandatory",
     });
     return;
   }
@@ -76,7 +76,7 @@ export const login = async (req: Request, res: Response) => {
   let data = {
     name: existingUser.name,
     email: existingUser.email,
-    image: existingUser.image,
+    image: `${req.app.locals.baseUrl}/profile-images/${existingUser.image}`,
   };
   res.status(200).json({
     code: 200,
