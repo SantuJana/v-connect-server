@@ -6,6 +6,7 @@ import { SocketService } from "./service/socket.service";
 import express from "express";
 import routes from "./route";
 import "./db/connection";
+import path from "path";
 
 // Creating express app
 const app = express();
@@ -14,15 +15,21 @@ const server = createServer(app);
 // Starting socket server
 const socketService = new SocketService(server);
 // middlewares
-app.use(cors({origin: "*"}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Routes
-app.use("/v-connect/api", routes);
+// public folder setup
+app.use(express.static(path.join(__dirname, "../public")));
 
 // Importing port from environment file
 const port = parseInt(process.env.PORT || "8082");
+const host = (process.env.HOST || "http://localhost");
+
+// local variables setup
+app.locals.baseUrl = `${host}:${port}`;
+
+// Routes
+app.use("/v-connect/api", routes);
 // Starting server
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${port}`);

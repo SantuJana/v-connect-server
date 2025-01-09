@@ -76,7 +76,7 @@ export const login = async (req: Request, res: Response) => {
   let data = {
     name: existingUser.name,
     email: existingUser.email,
-    image: existingUser.image,
+    image: `${req.app.locals.baseUrl}/profile-images/${existingUser.image}`,
   };
   res.status(200).json({
     code: 200,
