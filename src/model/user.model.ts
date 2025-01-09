@@ -16,6 +16,7 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    dob: Date,
     image: String,
     isActive: Boolean,
   },
