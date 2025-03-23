@@ -17,6 +17,7 @@ const userSchema = new Schema(
       require: true,
     },
     dob: Date,
+    city: String,
     image: String,
     isActive: Boolean,
   },

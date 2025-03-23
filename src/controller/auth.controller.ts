@@ -74,9 +74,12 @@ export const login = async (req: Request, res: Response) => {
   const payload = { id: existingUser._id };
   const token = await jwt.sign(payload, process.env.JWT_SECRET || "");
   let data = {
+    _id: existingUser._id,
     name: existingUser.name,
     email: existingUser.email,
-    image: `${req.app.locals.baseUrl}/profile-images/${existingUser.image}`,
+    image: existingUser.image,
+    city: existingUser.city,
+    dob: existingUser.dob,
   };
   res.status(200).json({
     code: 200,
