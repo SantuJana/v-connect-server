@@ -16,9 +16,22 @@ const userSchema = new Schema(
       type: String,
       require: true,
     },
+    gender: {
+      type: String,
+      enum: ["Male", "Female"],
+      require: true,
+    },
     dob: Date,
     city: String,
     image: String,
+    friends: [{
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    }],
+    requests: [{
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    }],
     isActive: Boolean,
   },
   { timestamps: true }

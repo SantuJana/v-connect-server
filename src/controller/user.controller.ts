@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "../model/user.model";
 import { AuthenticatedRequest } from "../middleware/checkAuthentication";
 import { uploadFile } from "../service/upload";
+import { Types } from "mongoose";
 
 export const list = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -73,3 +74,67 @@ export const update = async (req: AuthenticatedRequest, res: Response) => {
 
 };
 
+export const all = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const searchText = req.query.searchText;
+    const userId = req.user?.id;
+
+    const friends = await User.findById(userId).select('friends').select('requests');
+
+    const result = await User.aggregate([
+      {
+        $match: {
+          _id: {$nin: [userId, ...(friends?.friends || []), ...(friends?.requests || [])].map(friendId => new Types.ObjectId(friendId))},
+          name: {$regex: searchText || '', $options: "i"}
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "friends",
+          foreignField: "_id",
+          as: "friends1"
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          image: 1,
+          mutualFriends: {
+            $size: {
+              $setIntersection: [{$ifNull: ["$friends", []]}, {$ifNull: ["$friends1.friends", []]}]
+            }
+          },
+          alreadySent: {
+            $in: [
+              new Types.ObjectId(userId),
+              {
+                $reduce: {
+                  input: {$ifNull: ["$requests", []]},
+                  initialValue: [],
+                  in: { $concatArrays: ["$$value", ["$$this"]] }
+                }
+              }
+            ]
+          }
+        }
+      },
+    ])
+
+    res.status(200).json({
+      success: true,
+      status: "ok",
+      code: 200,
+      msg: "successfully got the list",
+      data: result,
+    })
+  } catch (error: any) {
+    console.log("+++++", error.message)
+    res.status(500).json({
+      success: true,
+      status: "internal server error",
+      code: 500,
+      msg: "failed to get list",
+    })
+  }
+}

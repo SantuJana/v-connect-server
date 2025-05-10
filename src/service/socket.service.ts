@@ -66,27 +66,33 @@ class SocketService {
         this.io.to(room).emit("user:join", { email, id: socket.id });
         this.io.to(socket.id).emit("room:join", data);
       });
+
       socket.on("user:call", (data) => {
         const { to, offer } = data;
         this.io.to(to).emit("incoming:call", { from: socket.id, offer });
       });
+
       socket.on("call:accepted", (data) => {
         const { to, ans } = data;
         this.io.to(to).emit("call:accepted", { from: socket.id, ans });
       });
+
       socket.on("call:stream:request", (data) => {
         const { to } = data;
         console.log("$$$$$", to)
         socket.to(to).emit("call:stream:request", { from: socket.id });
       });
+
       socket.on("peer:nego:needed", (data) => {
         const { to, offer } = data;
         this.io.to(to).emit("peer:nego:needed", { from: socket.id, offer });
       });
+
       socket.on("peer:nego:done", (data) => {
         const { to, ans } = data;
         this.io.to(to).emit("peer:nego:final", { from: socket.id, ans });
       });
+      
       socket.on("call:end", (data) => {
         const { to } = data;
         this.io.to(to).emit("call:end", { from: socket.id });

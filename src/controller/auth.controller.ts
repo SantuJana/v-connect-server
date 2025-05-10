@@ -2,37 +2,25 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../model/user.model";
+import { sendErrorResponse, sendSuccessResponse } from "../utils/sendResponse";
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password, dob } = req.body;
+  const { name, email, password, gender } = req.body;
 
-  if (!name || !email || !password || !dob) {
-    res.status(400).json({
-      code: 400,
-      status: "error",
-      msg: "Name, Email, Date of birth and Password are mandatory",
-    });
+  if (!name || !email || !password || !gender) {
+    sendErrorResponse(res, "Name, Email, Date of birth and Password are mandatory", 400);
     return;
   }
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    res.status(400).json({
-      code: 400,
-      status: "error",
-      msg: "Already have an account",
-    });
+    sendErrorResponse(res, "Already have an account", 400);
     return;
   }
 
   const user = await User.create(req.body);
   delete user.password;
-  res.status(200).json({
-    code: 400,
-    status: "success",
-    data: user,
-    msg: "Registration successful",
-  });
+  sendSuccessResponse(res, user, "Registration successful", 201);
   return;
 };
 
